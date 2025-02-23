@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thủy cung xây bởi KTS Tam Lư</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        .photo-album-page {
+            overflow-y: auto; /* Add vertical scroll bar if needed */
+            background: none; /* Remove inherited background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .album-banner {
+    font-size: 32px;
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+    margin-bottom: 20px;
+    font-family: 'Dancing Script', cursive; /* Romantic font */
+    background-color: rgba(67, 145, 227, 0.8); /* Semi-transparent blue background */
+    padding: 15px 30px;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+        }
+        .photo-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 20px;
+        }
+        .photo-grid img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover; /* Make the image cover the container */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: block; /* Ensure the image is displayed */
+        }
+        .photo-grid .photo-item {
+            position: relative;
+        }
+        .photo-grid .photo-item::before {
+            content: '';
+            display: block;
+            padding-top: 100%; /* This ensures that the photos are square */
+        }
+        .photo-grid .photo-item img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .album-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            background-color: #e33dbc;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            position: absolute;
+            bottom: 20px; /* Move to the bottom */
+            right: 20px; /* Move to the right */
+        }
+        .album-button:hover {
+            background-color: #0056b3;
+        }
+        body {
+            background: url('aquarium_background.png') no-repeat center center fixed;
+            background-size: cover;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            position: relative;
+            color: #fff;
+        }
+        .page {
+            height: 100vh;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .show {
+            display: flex;
+        }
+        .welcome-page {
+            text-align: center;
+        }
+        .old-paper {
+            background: url('old_paper_texture.jpg') no-repeat center center;
+            background-size: cover;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+            margin-bottom: 20px;
+            width: 30%;
+            max-width: 500px;
+            color: #000; /* Changed text color to black */
+        }
+        .scroll-down, .scroll-up {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 24px;
+            cursor: pointer;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .scroll-down {
+            bottom: 20px;
+        }
+        .scroll-up {
+            top: 20px;
+        } 
+        .scroll-right {
+            right: 20px;
+            width: auto;
+        }
+        .welcome-banner, .level-banner {
+            width: 20%;
+            text-align: center;
+            font-size: 32px;
+            color: #fff;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+            margin-bottom: 20px;
+            font-family: 'Dancing Script', cursive; /* Cool and stylish font */
+        }
+        .level-banner {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(94, 160, 230, 0.8); /* Semi-transparent blue background */
+            padding: 15px 30px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+        }
+        .bubble {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), rgba(0, 162, 232, 0.3));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin: 20px auto;
+            transition: transform 0.3s ease;
+            position: absolute;
+            z-index: 5;
+            border: 2px solid rgba(0, 162, 232, 0.7);
+            box-shadow: 0 0 15px rgba(0, 162, 232, 0.6);
+        }
+        .bubble:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent);
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            pointer-events: none;
+        }
+        .bubble:hover {
+            transform: scale(1.1);
+        }
+        .bubble-content {
+            display: none;
+            color: #fff;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        .bubble.active .bubble-content {
+            display: block;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+        }
+        .floating-bubble {
+            position: absolute;
+            bottom: -150px;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.7), rgba(0, 162, 232, 0.3));
+            border-radius: 50%;
+            animation: float 10s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(0, 162, 232, 0.5);
+        }
+        .floating-bubble:after {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent);
+            border-radius: 50%;
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            pointer-events: none;
+        }
+        .bubble-container {
+            position: absolute;
+            top: 100px;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .bubble:nth-child(1) { top: 150px; left: 20%; }
+        .bubble:nth-child(2) { top: 150px; left: 40%; }
+        .bubble:nth-child(3) { top: 150px; left: 60%; }
+        .bubble:nth-child(4) { top: 150px; left: 80%; }   
+    </style>
+</head>
+<body>
+    <div class="welcome-page show page" id="welcomePage">
+        <div class="welcome-banner"><span>Tiên cá thám hiểm đại dương</span></div>
+        <div class="old-paper">
+            <h2>Quy tắc</h2>
+            <ul>
+                <li>Bong bóng chỉ dùng 1 lần là vỡ.</li>
+                <li>Mọi điều ước trong bong bóng chỉ được thực hiện khi điều kiện thích hợp</li>
+                <li>Em phải yêu anh thì mới được đi thám hiểm thủy cung.</li>
+                <li>Mọi câu trả lời viết thường có dấu</li>
+            </ul>
+            <div class="scroll-right" onclick="scrollToPhotoAlbum()">➡️ Click ➡️</div>
+        </div>
+        <div class="scroll-down" onclick="scrollToLevel1()">⬇️ Click ⬇️</div>
+    </div>
+    <div class="level-page page" id="level1Page" style="background: url('level1_background.jpg') no-repeat center center fixed; background-size: cover;">
+        <div class="scroll-up" onclick="scrollToWelcome()">⬆️ Click ⬆️</div>
+        <div class="level-banner" style="position: absolute; top: 20px; left: 20px;"><span>50-200m</span></div>
+        <div class="bubble-container">
+            <div class="bubble"><span class="bubble-content">Đi chơi 1 ngày cùng em bé</span></div>
+            <div class="bubble"><span class="bubble-content">Xem cùng em 1 bộ phim</span></div>
+            <div class="bubble"><span class="bubble-content">Đi ăn món em chọn</span></div>
+        </div>
+        
+        <div class="scroll-down" onclick="scrollToLevel2()">⬇️ Click ⬇️</div>
+    </div>
+    <div class="level-page page" id="level2Page" style="background: url('level2_background.jpg') no-repeat center center fixed; background-size: cover;">
+        <div class="scroll-up" onclick="scrollToLevel1()">⬆️ Click ⬆️</div>
+        <div class="level-banner" style="position: absolute; top: 20px; left: 20px;"><span>200m-500m</span></div>
+        <div class="bubble-container">
+            <div class="bubble"><span class="bubble-content">Mua 1 bộ lingerie</span></div>
+            <div class="bubble"><span class="bubble-content">Mua 1 bộ váy</span></div>
+            <div class="bubble"><span class="bubble-content">Bong bóng này chưa "chín"</span></div>
+        </div>
+        <div class="scroll-down" onclick="scrollToLevel3()">⬇️ Click ⬇️</div>
+    </div>
+    <div class="level-page page" id="level3Page" style="background: url('level3_background.jpg') no-repeat center center fixed; background-size: cover;">
+        <div class="scroll-up" onclick="scrollToLevel2()">⬆️ Click ⬆️</div>
+        <div class="level-banner" style="position: absolute; top: 20px; left: 20px;"><span>500m-1000m</span></div>
+        <div class="bubble-container">
+            <div class="bubble"><span class="bubble-content">Tha thứ cho 1 lỗi lầm của em</span></div>
+            <div class="bubble"><span class="bubble-content">Để em riêng tư một mình một ngày</span></div>
+            <div class="bubble"><span class="bubble-content">Mua cho em bể cá + 2 phụ kiện</span></div>
+        </div>
+        <div class="scroll-down" onclick="scrollToLevel4()">⬇️ Click ⬇️</div>
+    </div>
+
+    <div class="level-page page" id="level4Page" style="background: url('level4_background.jpg') no-repeat center center fixed; background-size: cover;">
+        <div class="scroll-up" onclick="scrollToLevel3()">⬆️ Click ⬆️</div>
+        <div class="level-banner" style="position: absolute; top: 20px; left: 20px;"><span>Vùng nước cấm</span></div>
+        <div class="bubble-container">
+            <div class="bubble"><span class="bubble-content">dduj</span></div>
+            <div class="bubble"><span class="bubble-content">đụ</span></div>
+            <div class="bubble"><span class="bubble-content">doo</span></div>
+            <div class="bubble"><span class="bubble-content">đốc ghi</span></div>
+        </div>
+    </div>
+    <div class="photo-album-page page" id="photoAlbumPage">
+        <div class="album-banner"><span>Triển lãm đại dương</span></div>
+        <div class="photo-grid">
+            <!-- Placeholder for up to 12 photos -->
+            <div class="photo-item"><img src="images/photo1.jpeg" alt="Photo 1"></div>
+            <div class="photo-item"><img src="images/photo2.jpg" alt="Photo 2"></div>
+            <div class="photo-item"><img src="images/photo3.jpg" alt="Photo 3"></div>
+            <div class="photo-item"><img src="images/photo4.jpg" alt="Photo 4"></div>
+            <div class="photo-item"><img src="images/photo5.jpg" alt="Photo 5"></div>
+            <div class="photo-item"><img src="images/photo6.jpg" alt="Photo 6"></div>
+            <div class="photo-item"><img src="images/photo7.jpg" alt="Photo 7"></div>
+            <div class="photo-item"><img src="images/photo8.jpg" alt="Photo 8"></div>
+            <div class="photo-item"><img src="images/photo9.jpg" alt="Photo 9"></div>
+            <div class="photo-item"><img src="images/photo10.jpg" alt="Photo 10"></div>
+            <div class="photo-item"><img src="images/photo11.jpg" alt="Photo 11"></div>
+            <div class="photo-item"><img src="images/photo12.jpg" alt="Photo 12"></div>
+        </div>
+        <a href="https://drive.google.com/drive/folders/1aBG5qhrUCoagcE4O7xW5OkHWoI1-crQR" class="album-button" id="albumButton">Kho</a>
+        <div class="scroll-up" onclick="goBackToWelcome()">⬆️ Back ⬆️
+    </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
